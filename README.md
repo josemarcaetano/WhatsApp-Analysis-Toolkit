@@ -16,5 +16,4 @@ Getting started:
         
 Database
 
-    If you are a researcher/academic who wants access to the dataset 
-    (for research purposes only), please send an email to Josemar Caetano (josemarcaetano@dcc.ufmg.br).
+    If you are a researcher/academic who wants access to the dataset (for research purposes only), please send an email to Josemar Caetano (josemarcaetano@dcc.ufmg.br).
