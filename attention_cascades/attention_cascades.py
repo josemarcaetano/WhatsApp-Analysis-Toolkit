@@ -440,26 +440,17 @@ class AttentionCascades:
             messages_with_fake_news = set()
             messages_with_fake_news_dict = {}
 
-            alternate_messages_with_fake_news = set()
-            alternate_messages_with_fake_news_dict = {}
-
             print("\t>>>> Building dictionary of messages falsehood verdict\tDatetime: ", datetime.now(), flush=True)
             # "document_id"  "fact_check_url" "cosine_similarity" "length_message" "length_fake_news_text"  "my_verdict_has_verdict" "cosine_similarity_str" "has_falsehood_str" "cosine_similarity_interval_str"
             with open(filename_fake_news_messages_manual_final, 'r', encoding='utf-8') as file_input:
                 header = file_input.readline()
                 for info in file_input:
                     info = info.replace("\n", "").split("\t")
-                    # if(str(info[7]).replace("\"","") == "False"):
-                    #     messages_with_fake_news.add(info[0].replace("\"",""))
-                    #     messages_with_fake_news_dict[info[0]] = info[1].replace("\"","")
 
-                    if(float(info[6].replace("\"","")) >= 0.52 or str(info[5].replace("\"","")) == "True"):
+                    if(str(info[5].replace("\"","")) == "True"):
                         messages_with_fake_news.add(info[0].replace("\"",""))
                         messages_with_fake_news_dict[info[0]] = info[1].replace("\"","")
 
-                    if (str(info[5].replace("\"", "")) == "True"):
-                        alternate_messages_with_fake_news.add(info[0].replace("\"", ""))
-                        alternate_messages_with_fake_news_dict[info[0]] = info[1].replace("\"", "")
 
 
             print("\t>>>> Creating cascades attributes files\tDatetime: ", datetime.now(), flush=True)
@@ -469,24 +460,24 @@ class AttentionCascades:
             with open(filename_cascades_static_attributes, 'w', encoding='utf-8') as file_cascades_static_attributes:
                 file_cascades_static_attributes.write(str("cascade_id\tgroup_id\tgroup_category\troot_message\t"
                                                           "total_messages\ttotal_users\thas_falsehood\tmaximum_depth\t"
-                                                          "unique_users\tstructural_virality\tbreadth\tfact_check_url\talternate_has_falsehood\talternate_fact_check_url\n"))
+                                                          "unique_users\tstructural_virality\tbreadth\tfact_check_url\n"))
                 with open(filename_cascades_depth_oriented_attributes, 'w',
                           encoding='utf-8') as file_cascades_depth_oriented_attributes:
                     file_cascades_depth_oriented_attributes.write(str(
                         "cascade_id\tgroup_id\tgroup_category\troot_message\ttotal_messages\ttotal_users\thas_falsehood\t"
-                        "depth\ttime_passed\tbreadth\tunique_users\tfact_check_url\talternate_has_falsehood\talternate_fact_check_url\n"))
+                        "depth\ttime_passed\tbreadth\tunique_users\tfact_check_url\n"))
                     with open(filename_cascades_unique_users_over_time, 'w',
                               encoding='utf-8') as file_cascades_unique_users_over_time:
                         file_cascades_unique_users_over_time.write(str(
                             "cascade_id\tgroup_id\tgroup_category\troot_message\ttotal_messages\ttotal_users\t"
-                            "has_falsehood\tunique_users\ttime_passed\tfact_check_url\talternate_has_falsehood\talternate_fact_check_url\n"))
+                            "has_falsehood\tunique_users\ttime_passed\tfact_check_url\n"))
 
                         with open(filename_messages_in_cascades_mapping_tsv, 'w',
                                   encoding='utf-8') as file_messages_in_cascades_mapping_tsv:
                             file_messages_in_cascades_mapping_tsv.write(str(
                                 "cascade_id\tmessage_id\tuser_id\tgroup_id\tgroup_category\tmessage_type\troot_message\tmessage_depth\ttime_passed_since_root\t"
                                 "publication_date\tcascade_has_falsehood\tmessage_has_falsehood\turl_fact_checking_news\tsentiment\ttotal_words\ttotal_emojis\t"
-                                "total_urls\talternate_cascade_has_falsehood\talternate_message_has_falsehood\talternate_fact_check_url\n"))
+                                "total_urls\n"))
 
                             with open(filename_messages_in_cascades_mapping, 'w',
                                       encoding='utf-8') as file_messages_in_cascades_mapping:
@@ -534,11 +525,9 @@ class AttentionCascades:
 
                                             # Check if cascade has falsehood
                                             has_falsehood = not set(messages_with_fake_news).isdisjoint(graph_nodes)
-                                            alternate_has_falsehood = not set(alternate_messages_with_fake_news).isdisjoint(graph_nodes)
 
                                             # Get fact checking URL
                                             fact_check_url = ""
-                                            alternate_fact_check_url = ""
 
                                             if(has_falsehood):
                                                 for a_node in graph_nodes:
@@ -546,11 +535,6 @@ class AttentionCascades:
                                                         fact_check_url = messages_with_fake_news_dict[a_node]
                                                         break
 
-                                            if (alternate_has_falsehood):
-                                                for a_node in graph_nodes:
-                                                    if (a_node in alternate_messages_with_fake_news_dict):
-                                                        alternate_fact_check_url = alternate_messages_with_fake_news_dict[a_node]
-                                                        break
 
                                             total_cascade_messages = len(graph_nodes)
                                             total_cascade_users = unique_users
@@ -580,7 +564,7 @@ class AttentionCascades:
                                                             "\t" + str(total_cascade_messages) + "\t" + str(
                                                                 total_cascade_users) + "\t" + str(has_falsehood) + "\t" +
                                                             str(len(unique_users_over_time_list)) + "\t" + str(minutes) + "\t" +
-                                                            str(fact_check_url)+"\t"+str(alternate_has_falsehood)+"\t"+str(alternate_fact_check_url)+"\n"))
+                                                            str(fact_check_url)+"\n"))
 
 
                                             # (4) >>>>>>>>>> Breadth
@@ -592,7 +576,7 @@ class AttentionCascades:
                                                 "\t"+str(total_cascade_messages)+"\t"+str(total_cascade_users)+"\t"+str(has_falsehood)+"\t"+
                                                 str(maximum_depth)+"\t"+str(unique_users)+"\t"+
                                                 str(structural_virality)+"\t"+str(max_breadth)+ "\t" +
-                                                            str(fact_check_url)+"\t"+str(alternate_has_falsehood)+"\t"+str(alternate_fact_check_url)+"\n"))
+                                                            str(fact_check_url)+"\n"))
 
 
                                             # *********** DEPTH ORIENTED FEATURES
@@ -631,7 +615,7 @@ class AttentionCascades:
                                                         total_cascade_users) + "\t" + str(has_falsehood) + "\t" +
                                                     str(depth) + "\t" + str(minutes) + "\t" +
                                                     str(breadth_at_depth) + "\t" + str(unique_users_at_depth) +"\t"+
-                                                            fact_check_url+"\t"+str(alternate_has_falsehood)+"\t"+str(alternate_fact_check_url)+"\n"))
+                                                            fact_check_url+"\n"))
 
                                             # ######## WRITING MAPPING FILE
                                             for a_node in graph_nodes:
@@ -675,10 +659,7 @@ class AttentionCascades:
                                                 document["publication_date"] = publication_date
                                                 document['cascade_has_falsehood'] = has_falsehood
                                                 document['message_has_falsehood'] = (a_node in messages_with_fake_news)
-                                                document['alternate_cascade_has_falsehood'] = alternate_has_falsehood
-                                                document['alternate_message_has_falsehood'] = (a_node in alternate_messages_with_fake_news)
                                                 document["url_fact_checking_news"] = fact_check_url
-                                                document["alternate_url_fact_checking_news"] = fact_check_url
 
                                                 sentiment = None
                                                 total_words = None
@@ -704,8 +685,7 @@ class AttentionCascades:
                                                     message_type+"\t"+str((first_node == a_node))+"\t"+str(message_depth)+"\t"+str(time_passed_since_root)+"\t"+
                                                     str(publication_date)+"\t"+str(has_falsehood)+"\t"+str((a_node in messages_with_fake_news))+"\t"+
                                                     str(fact_check_url)+"\t"+str(sentiment)+"\t"+str(total_words)+"\t"+str(total_emojis)+"\t"+
-                                                    str(total_urls)+"\t"+str(alternate_has_falsehood)+"\t" +
-                                                    str((a_node in alternate_messages_with_fake_news))+"\t"+str(alternate_fact_check_url)+"\n"))
+                                                    str(total_urls)+"\n"))
 
                                         except Exception as e:
                                             exc_type, exc_obj, exc_tb = sys.exc_info()
