@@ -13,3 +13,8 @@ Environment:
 Getting started:
 
     To install dependencies: sudo pip3 install -r dependencies.txt --upgrade
+        
+Database
+    
+    If you are a researcher/academic who wants access to the dataset 
+    (for research purposes only), please send an email to Josemar Caetano (josemarcaetano@dcc.ufmg.br).
