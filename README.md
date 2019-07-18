@@ -20,7 +20,7 @@ Dataset
 --------
 
 If you are a researcher/academic who wants access to the dataset 
-(for research purposes only), please send an email to Josemar Caetano (josemarcaetano@dcc.ufmg.br).
+(for research purposes only), please send an email to [Josemar Caetano](josemarcaetano@dcc.ufmg.br).
 
 Cite
 --------
