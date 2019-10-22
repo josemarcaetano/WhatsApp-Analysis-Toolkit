@@ -1,4 +1,4 @@
-# WhatsApp-Analysis-Toolkit
+# whatsapp-attention-cascades
 
 Code from our WebSci 2019 paper. 
 In the paper, we characterize and analyze how attention propagates among the participants of a WhatsApp group. 
